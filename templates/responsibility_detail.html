@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HANDOFF | Responsibility</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f6fb;
+            margin: 0;
+            padding: 24px;
+            color: #172033;
+        }
+
+        .card {
+            max-width: 520px;
+            margin: 40px auto;
+            padding: 24px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 28px #17203312;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 7px 12px;
+            background: #e8f7ee;
+            border-radius: 20px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: 0;
+            border-radius: 9px;
+            background: #b42318;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .note {
+            color: #596579;
+            line-height: 1.6;
+        }
+
+        #alert-result {
+            overflow-wrap: anywhere;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="card">
+        <h1>HANDOFF</h1>
+        <p class="note">Responsibility details</p>
+
+        <h2>{{ task.title }}</h2>
+
+        <p>{{ task.description or "No description provided." }}</p>
+
+        <p>
+            <strong>Responsible person:</strong>
+            {{ task.assigned_to or "Not assigned" }}
+        </p>
+
+        <p>
+            <strong>Status:</strong>
+            <span class="status">{{ task.status or "Pending" }}</span>
+        </p>
+
+        <p class="note">
+            Confirm only if this is a genuine emergency.
+            This demo records a request but does not send notifications.
+            For immediate emergency assistance in India, call 112.
+        </p>
+
+        <button type="button" id="emergency-button">
+            Confirm Emergency
+        </button>
+
+        <p id="alert-result" role="status" aria-live="polite"></p>
+    </main>
+
+    <script>
+        const responsibilityId = {{ task.id | tojson }};
+        const button = document.getElementById("emergency-button");
+        const result = document.getElementById("alert-result");
+
+        button.addEventListener("click", async () => {
+            const confirmed = window.confirm(
+                "Confirm that this is a real emergency? " +
+                "This demo records a request but does not send notifications."
+            );
+
+            if (!confirmed) {
+                return;
+            }
+
+            button.disabled = true;
+            result.textContent = "Recording demo request...";
+
+            try {
+                const response = await fetch("/api/emergency-alerts", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        responsibility_id: responsibilityId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(
+                        data.error || "Request failed"
+                    );
+                }
+
+                result.textContent =
+                    "Demo request recorded. No notification was sent.";
+
+            } catch (error) {
+                console.error("Emergency request error:", error);
+
+                result.textContent =
+                    "Could not record request. Please check the server.";
+
+                button.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

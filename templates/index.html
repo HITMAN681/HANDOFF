@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HANDOFF | Responsibility Continuity</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div
+        style="display:flex; justify-content:space-between; align-items:center; gap:12px; padding:16px; margin-bottom:20px; background:#172554; color:white; border-radius:12px;">
+        <span>Welcome, {{ session.get("user_name", "User") }}</span>
+
+        <form method="POST" action="{{ url_for('logout') }}">
+            <button type="submit"
+                style="padding:10px 18px; background:#ef4444; color:white; border:0; border-radius:8px; cursor:pointer;">
+                Logout
+            </button>
+        </form>
+    </div>
+    
+    <aside class="sidebar">
+        <a class="brand" href="/">
+            <span class="brand-icon">H</span>
+            <span>HANDOFF<small>RESPONSIBILITY CONTINUITY</small></span>
+        </a>
+
+        <p class="nav-label">WORKSPACE</p>
+        <nav>
+            <a class="nav-item active" href="#overview">▦ &nbsp; Overview</a>
+            <a class="nav-item" href="#responsibilities">☷ &nbsp; Responsibilities</a>
+            <a class="nav-item" href="#contacts">♧ &nbsp; Trusted Contacts</a>
+            <a class="nav-item" href="#emergency">◉ &nbsp; Emergency Center</a>
+        </nav>
+
+        <div class="sidebar-note">
+            <span class="status-dot"></span>
+            <strong>Safety first</strong>
+            <p>A QR scan alone never activates a handoff.</p>
+        </div>
+
+        <div class="profile">
+            <div class="avatar">U</div>
+            <div><strong>Demo User</strong><small>Local prototype</small></div>
+        </div>
+    </aside>
+
+    <main class="main-content" id="overview">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">YOUR PERSONAL WORKSPACE</p>
+                <h1>Responsibility overview</h1>
+                <p class="muted">Plan ahead. Stay prepared. Keep life moving.</p>
+            </div>
+            <span class="pill"><span class="status-dot"></span> Demo mode</span>
+        </header>
+
+        <section class="welcome">
+            <div>
+                <p class="eyebrow light">PREPAREDNESS STARTS HERE</p>
+                <h2>When you can't act,<br>your plan can.</h2>
+                <p>Organize essential responsibilities and decide in advance
+                    who may help if an emergency occurs.</p>
+                <a href="#responsibilities" class="primary-btn">
+                    View responsibilities →
+                </a>
+            </div>
+            <div class="welcome-symbol">H</div>
+        </section>
+
+        <section class="stats">
+            <article class="stat-card">
+                <span class="stat-icon">☷</span>
+                <p>Total responsibilities</p>
+                <h3 id="task-count"></h3>
+                <small>Sample dashboard data</small>
+            </article>
+            <article class="stat-card">
+                <span class="stat-icon">♧</span>
+                <p>Trusted contacts</p>
+                <h3 id="contact-count">2</h3>
+                <small>Example contacts only</small>
+            </article>
+            <article class="stat-card">
+                <span class="stat-icon">✓</span>
+                <p>Plan status</p>
+                <h3 class="small-heading">In preparation</h3>
+                <small>Not verified or activated</small>
+            </article>
+        </section>
+
+        <section class="content-grid">
+            <article class="panel" id="responsibilities">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">YOUR PLAN</p>
+                        <h2>Responsibilities</h2>
+                    </div>
+                    <button class="secondary-btn" id="add-task">
+                        + Add task
+                    </button>
+
+                </div>
+
+                <div id="task-list" class="task-list">
+                </div>
+            </article>
+
+            <article class="panel" id="contacts">
+                <div class="section-heading">
+                    <button class="secondary-btn" id="add-contact">
+                        + Add contact
+                    </button>
+                    <div>
+                        <p class="eyebrow">YOUR SUPPORT NETWORK</p>
+                        <h2>Trusted contacts</h2>
+                    </div>
+                </div>
+                <div id="contact-list">
+                    <!-- Contacts will load from the backend -->
+                </div>
+
+                <p class="demo-note">No messages are sent to contacts.</p>
+            </article>
+        </section>
+
+        <section class="panel emergency-panel" id="emergency">
+            <div class="emergency-mark">!</div>
+
+            <div class="emergency-copy">
+                <p class="eyebrow">EMERGENCY CENTER</p>
+                <h2>Emergency readiness</h2>
+                <p>
+                    Review your emergency plan and select a trusted contact.
+                    This prototype does not send alerts or activate a handoff.
+                </p>
+
+                <label for="emergency-contact">Trusted contact</label>
+                <select id="emergency-contact">
+                    <option value="">Loading contacts...</option>
+                </select>
+
+                <label for="emergency-notes">Situation notes</label>
+                <textarea id="emergency-notes" rows="3" placeholder="Add non-sensitive notes for your plan">
+        </textarea>
+
+                <button class="secondary-btn" id="prepare-emergency">
+                    Prepare emergency plan
+                </button>
+
+                <p id="emergency-result" role="status" aria-live="polite">
+                    No action has been taken.
+                </p>
+                <div class="saved-plans">
+                    <h3>Saved emergency plans</h3>
+                    <div id="emergency-plan-list">
+                        <p class="demo-note">Loading saved plans...</p>
+                    </div>
+                </div>
+            </div>
+
+            <span class="pill warning">Not activated</span>
+        </section>
+
+        <footer>
+            HANDOFF · Privacy-focused responsibility coordination
+            <span>Prototype · Demo data only</span>
+        </footer>
+        <!-- HANDOFF Notification Activity -->
+        <section class="panel" id="notification-activity">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">ALERT MONITORING</p>
+                    <h2>Notification Activity</h2>
+                </div>
+                <button type="button" class="secondary-btn" id="refresh-notifications">
+                    Refresh
+                </button>
+            </div>
+
+            <p class="demo-notice">
+                DEMO MODE — No real SMS, email, or authority notifications are sent.
+            </p>
+
+            <div id="notification-list" aria-live="polite">
+                Loading notification history...
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>
